@@ -1,0 +1,30 @@
+/* src/FAQ.module.css */
+.faqContainer {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center; /* Center align text within the container */
+  }
+  
+  .faqList {
+    margin-top: 20px;
+    text-align: left; /* Left align text for the list */
+  }
+  
+  .faqItem {
+    border-bottom: 1px solid #ccc;
+    padding: 10px 0;
+  }
+  
+  .question {
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .answer {
+    padding: 10px 0;
+    color: #666;
+  }
+  

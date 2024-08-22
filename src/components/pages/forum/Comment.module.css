@@ -1,0 +1,66 @@
+.commentSection {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
+  
+  .commentSection textarea {
+    width: 100%;
+    height: 100px;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+  }
+  
+  .commentSection button {
+    align-self: flex-end;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .commentSection button:hover {
+    background-color: #0056b3;
+  }
+  
+  .comment {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .commentAuthor {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  
+  .commentDate {
+    color: #888;
+    font-size: 12px;
+  }
+
+.commentActions {
+  display: flex;
+  gap: 4px;
+}
+
+.commentContent {
+  margin-bottom: 4px;
+}
+
+.replySection {
+  padding-top: 14px;
+  padding-left: 20px;
+}
+
+.replyContainer {
+  display: flex;
+  align-items: flex-end; /* Align items at the start (top) */
+}
+
+.replyContainer button {
+  margin-bottom: 0px; /* Adjust margin to fine-tune vertical alignment */
+}

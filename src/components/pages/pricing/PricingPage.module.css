@@ -1,0 +1,24 @@
+.pricingPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+  
+  .pricingTable {
+    max-width: 1200px;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .pricingTable th, .pricingTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .pricingTable th {
+    background-color: #f2f2f2;
+  }
+  

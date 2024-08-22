@@ -1,0 +1,84 @@
+.mainContainer {
+    padding: 20px 20px;
+}
+
+.stickyNavbar {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    padding: 10px;
+    z-index: 1000; /* Make sure it appears above other content */
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #ccc;
+  }
+
+.modalContainer {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 16px 16px;
+    background: white;
+    border-radius: 5px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .modalButton {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 6px;
+  }
+  
+  .marginRight {
+    margin-right: 6px;
+  }
+
+  .imageUpload {
+    padding-top: 6px;
+  }
+
+  .fileInputLabel {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    background-color: #377cfc;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  
+  .fileInput {
+    display: none;
+  }
+  
+  .plusIcon {
+    margin-right: 5px;
+  }
+  
+  .imagePreviewContainer {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+  
+  .imagePreview {
+    position: relative;
+    width: 150px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .removeImageButton {
+    position: absolute;
+    top: 10px;
+    right: 4px;
+    background-color: rgb(255, 148, 148);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 5px 8px;
+  }
+  

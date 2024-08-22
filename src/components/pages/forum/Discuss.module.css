@@ -1,0 +1,274 @@
+.forumPage {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0px 16px;
+}
+
+.forumHeader {
+  z-index: 1;
+  margin: -15px 0px;
+  padding-bottom: 0px;
+  /* position: sticky;
+  position: -webkit-sticky; */
+  top: 40px;
+}
+
+.forumHeaderModalOpen {
+  z-index: 0;
+}
+
+.stickyHeader {
+  height: 75px;
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  padding-bottom: 10px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.stickyHeader > h5 {
+  padding: 0px;
+  margin: 0px;
+}
+
+.discussHeader {
+  padding-top: 0px;
+}
+
+.discussSearchInput {
+  padding-left: 10px;
+  align-items: center;
+}
+
+.discussButton {
+  white-space: nowrap;
+  background-color: rgb(21, 0, 255);
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.forumHeader h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.forumTabs {
+  display: flex;
+  justify-content: flex-start;
+  padding: 10px 20px;
+}
+
+.forumTab {
+  background-color: #f5f5f5;
+  border: none;
+  padding: 10px 20px;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.forumTabActive {
+  background-color: #007bff;
+  color: white;
+}
+
+.forumContent {
+  padding-top: 15px;
+  padding-bottom: 20px;
+  z-index: -1;
+}
+
+.forumQuestions {
+  gap: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.forumQuestion:hover {
+  background-color: #f9f9f9;
+}
+
+.authorDate {
+  font-size: 12px;
+  color: #666;
+}
+
+.tags {
+  margin: 10px 0;
+}
+
+.tag {
+  background-color: #e9ecef;
+  color: #495057;
+  padding: 5px 10px;
+  border-radius: 3px;
+  margin-right: 5px;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #666;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  font-size: 18px;
+  color: #666;
+}
+
+.Modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 1000px;
+  width: 100%;
+  overflow-y: auto; /* Enable vertical scrolling */
+  display: flex;
+  flex-direction: column;
+}
+
+.modalContainer {
+  overflow-y: auto;
+}
+
+.modalButton {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 6px;
+}
+
+.marginRight {
+  margin-right: 6px;
+}
+
+.Overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.loadMoreContainer {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  padding-top: 10px;
+}
+
+.button {
+  background-color: rgb(19, 53, 110);;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+  margin-top: 8px;
+  white-space: nowrap;
+}
+
+.buttonPost {
+  background-color: #0188FB;
+  color: white;
+  padding: 7px 14px;
+  border: none;
+  font-size: 14px;
+  transition: transform 0.2s ease;
+  box-shadow: 7px 7px 7px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+}
+
+.buttonPost:hover {
+  transform: translateY(-2px);
+}
+
+.button:hover {
+  transform: translateY(-2px);
+}
+
+/* .floatingButton {
+  position: fixed;
+  bottom: 12px;
+  right: 22px;
+  z-index: 1000;
+  background-color: var(--main-color);
+  border-radius: 30px;
+  color: white;
+  padding: 4px 4px;
+  border: none;
+  transition: transform 0.2s ease;
+  box-shadow: 7px 7px 7px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+  max-width: 0;
+  -webkit-transition: max-width 1s;
+  transition: max-width 1s;
+} */
+
+.floatingButton {
+  position: fixed;
+  bottom: 12px;
+  right: 22px;
+  z-index: 1000;
+  background-color: var(--main-color);
+  border-radius: 30px;
+  color: white;
+  padding: 4px 4px;
+  border: none;
+  box-shadow: 7px 7px 7px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+  max-width: 50px;
+  overflow: hidden; /* Ensures content doesn't overflow */
+  transition: max-width 0.5s ease, padding 0.5s ease;
+}
+
+.floatingButton span {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.grow {
+  max-width: 300px;
+  padding-right: 20px;
+}
+
+.shrink span {
+  opacity: 0;
+  visibility: hidden; /* Hide the text smoothly */
+  transition: opacity 0.3s ease;
+}
+
+.floatingButton:hover {
+  transform: translateY(-2px);
+}
+@media (min-width: 768px) {
+  .floatingButton {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .forumQuestions {
+    gap: 8px;
+  }
+  .discussSearchInput {
+    display: none; /* Hide the existing button in the sticky header */
+  }
+}

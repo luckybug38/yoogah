@@ -1,0 +1,10 @@
+.upcomingRow {
+    width: 800px;
+    padding: 10px 20px;
+    margin: 8px 0;
+    border: 1px solid #ddd;
+    transition: background-color 0.3s;
+    box-sizing: border-box;
+    min-height: 100px;
+    display: flex;
+}

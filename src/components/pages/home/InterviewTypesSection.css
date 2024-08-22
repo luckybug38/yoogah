@@ -1,0 +1,57 @@
+@font-face {
+    font-family: 'nanum';
+    src: url('../../../assets/fonts/nanum.ttf');
+    font-style: normal;
+    font-weight: bold;
+}
+
+.interview-types-section {
+    text-align: center;
+    padding: 0px 20px;
+    padding-bottom: 100px;
+  }
+  
+  .interview-types-section h2 {
+    font-family: 'nanum', cursive;
+    font-size: 2rem;
+    margin-bottom: 40px;
+  }
+  
+  .cards-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+  }
+  
+  .card {
+    background-color: #1e1e1e; /* Default dark background */
+    color: white;
+    border-radius: 10px;
+    padding: 20px;
+    width: 300px;
+    transition: transform 0.3s ease;
+  }
+  
+  .card.blue {
+    background-color: #005bbb; /* Dark blue background */
+  }
+  
+  .card.light-blue {
+    background-color: #007bff; /* Light blue background */
+  }
+  
+  .card h3 {
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+  }
+  
+  .card hr {
+    border: 1px solid #ddd;
+    margin: 20px 0;
+  }
+  
+  .card p {
+    font-size: 1rem;
+  }
+  

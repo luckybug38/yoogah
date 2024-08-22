@@ -1,0 +1,10 @@
+.simpleEditor {
+    width: 100%;
+    height: calc(100vh - 500px); /* Adjust based on modal padding and other elements */
+    padding: 10px;
+    box-sizing: border-box;
+    resize: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}

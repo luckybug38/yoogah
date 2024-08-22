@@ -1,0 +1,145 @@
+.forumQuestion {
+    cursor: pointer;
+    padding: 18px 20px;
+    /* margin: 8px 0; */
+    border: 1px solid rgb(233, 234, 238);
+    border-radius: 0.75rem;
+    display: flex;
+    transition: background-color 0.3s;
+    box-sizing: border-box;
+    min-height: 100px;
+    /* box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1); */
+    background-color: white;
+
+}
+
+.forumQuestion:hover {
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+}
+
+.voteSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    gap: 5px;
+    filter: invert(12%) sepia(81%) saturate(5370%) hue-rotate(326deg) brightness(108%) contrast(107%);
+}
+
+.voteCount {
+    font-size: 18px;
+}
+
+.questionDetails {
+    padding: 5px 0px;
+    gap: 4px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+}
+
+.title {
+    font-size: 18px;
+    font-weight: bold;
+    padding-bottom: 4px;
+}
+.spacer {
+    padding: 2px 0px
+}
+.postBody {
+    -webkit-line-clamp: 2; /* Limit to 3 lines */
+    line-clamp: 2;
+    overflow-wrap: anywhere; 
+    font-size: 14px;
+    color: #4f4f4f;
+    padding-bottom: 8px;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+}
+
+.postBody img {
+    max-height: 120px;
+}
+
+.authorDate {
+    font-size: 12px;
+    color: #666;
+}
+
+.tags {
+    padding-bottom: 8px;
+}
+
+.tag {
+    color: white;
+    font-size: small;
+    padding: 5px 10px;
+    border-radius: 24px;
+    margin-right: 5px;
+}
+
+.author {
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content: left;
+    gap: 5px;
+    font-size: 12px;
+    color: #666;
+}
+
+.stats {
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content: left;
+    gap: 5px;
+    font-size: 12px;
+    color: #666;
+}
+  
+.verticalDivider {
+    border-left: 1px solid #ddd;
+}
+
+.icon {
+    width: 15px;
+    height: 15px;
+}
+
+.arrowIcon {
+    width: 20px;
+    height: 20px;
+    filter: invert(12%) sepia(81%) saturate(5370%) hue-rotate(326deg) brightness(108%) contrast(107%);
+}
+
+.likes {
+    display: flex;
+    gap: 5px;
+    cursor: pointer;
+  }
+  
+  .heart {
+    color: #666;
+  }
+
+  .postImages {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    background: rgb(244, 244, 255);
+    border-radius: 12px;
+    margin-bottom: 10px;
+  }
+  
+  .postImage img {
+    max-width: 100%;
+    max-height: 250px; /* Set the maximum height */
+    height: auto; /* Adjusts the height to maintain the aspect ratio */
+    object-fit: contain; /* Ensures the image maintains its aspect ratio and fits within the given dimensions */
+  }

@@ -1,0 +1,64 @@
+/* AutocompleteInput.module.css */
+.autocomplete {
+  position: relative;
+  }
+
+.tagContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 1px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+
+.tag {
+  display: flex;
+  align-items: center;
+  background-color: #e0e0e0;
+  border-radius: 16px;
+  padding: 4px 8px;
+}
+
+.tagClose {
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+.input {
+  border: none;
+  flex: 1;
+  padding: 8px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.suggestionsDropdown {
+  margin-top: -6px;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  max-height: 220px; /* Adjust as needed */
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.suggestionsList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.suggestionItem {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.suggestionItem:hover,
+.focused {
+  background-color: #f0f0f0;
+}
