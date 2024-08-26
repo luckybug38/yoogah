@@ -142,7 +142,10 @@ const WritePost: React.FC = () => {
           console.error("Error updating post: ", error);
           alert("포스트 수정에 실패했습니다. 다시 시도해주세요.");
         }
-        navigate(`/post/${id}`, { state: { shouldLoadFromServer: true } });
+        navigate(`/post/${id}`, {
+          state: { shouldLoadFromServer: true },
+          replace: true,
+        });
       } else {
         const counterRef = doc(db, "counters", "postCounter");
         await runTransaction(db, async (transaction) => {
@@ -178,7 +181,10 @@ const WritePost: React.FC = () => {
         });
 
         alert("저장완료");
-        navigate(`/post/${count}`, { state: { shouldNotIncrementView: true } });
+        navigate(`/post/${count}`, {
+          state: { shouldNotIncrementView: true },
+          replace: true,
+        });
       }
     } catch (error) {
       alert("저장이 안되었습니다. 다시 시도해주세요!");
@@ -189,49 +195,15 @@ const WritePost: React.FC = () => {
 
   return (
     <div className={styles.mainContainer}>
-      <div className={styles.stickyNavbar}>
-        <button
-          className="luckybug-btn luckybug-grey"
-          onClick={() => {
-            navigate(-1);
-          }}
-          disabled={uploading}
-        >
-          Cancel
-        </button>
-        <button
-          className="luckybug-btn"
-          onClick={handleSaveContent}
-          disabled={!modalTitle.trim() || !editorContent.trim() || uploading}
-        >
-          {uploading ? "Uploading..." : "Post"}
-        </button>
-      </div>
       <div className={styles.modalContainer}>
         <div className={styles.modalButton}>
           <input
-            className="form-control me-2"
+            className="form-control"
             placeholder="제목"
             aria-label="title"
             value={modalTitle}
             onChange={(e) => setModalTitle(e.target.value)}
           />
-          <button
-            className={`luckybug-btn luckybug-grey ${styles.marginRight}`}
-            onClick={() => {
-              navigate(-1);
-            }} // Go back on cancel
-            disabled={uploading}
-          >
-            Cancel
-          </button>
-          <button
-            className="luckybug-btn col-lg-1"
-            onClick={handleSaveContent}
-            disabled={!modalTitle.trim() || !editorContent.trim() || uploading}
-          >
-            {uploading ? "Uploading..." : "Post"}
-          </button>
         </div>
         <AutocompleteInput
           setSelectedTags={setSelectedTags}
@@ -284,6 +256,24 @@ const WritePost: React.FC = () => {
               </div>
             ))}
           </div>
+        </div>
+        <div className={styles.buttons}>
+          <button
+            className="luckybug-btn luckybug-grey"
+            onClick={() => {
+              navigate(-1);
+            }}
+            disabled={uploading}
+          >
+            Cancel
+          </button>
+          <button
+            className="luckybug-btn"
+            onClick={handleSaveContent}
+            disabled={!modalTitle.trim() || !editorContent.trim() || uploading}
+          >
+            {uploading ? "Uploading..." : "Post"}
+          </button>
         </div>
       </div>
     </div>

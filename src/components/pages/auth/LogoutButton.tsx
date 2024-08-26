@@ -21,7 +21,7 @@ const LogoutButton = () => {
 
   return (
     <button
-      className="btn btn-danger"
+      className="luckybug-btn luckybug-red"
       onClick={() => {
         auth.signOut();
         dispatch(clearUserData());

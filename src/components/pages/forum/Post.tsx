@@ -182,7 +182,11 @@ const Post: React.FC = () => {
   };
 
   if (!post) {
-    return <div>Loading...</div>;
+    return (
+      <div className={styles.mainContainer}>
+        <div>Loading...</div>
+      </div>
+    );
   }
 
   const hasUserLikedPost = () => {
@@ -233,14 +237,14 @@ const Post: React.FC = () => {
   };
 
   const isOwner = post.userId === user.id;
-
+  const isAdmin = user.id === "UwBFyYV1DmSuQXzwjUQObabWBWD3";
   return (
     <div className={styles.mainContainer}>
       <div className={styles.postContainer}>
         <div className={styles.postHeader}>
           <div className={styles.postTitle}>
             {post.title}
-            {isOwner && (
+            {(isOwner || isAdmin) && (
               <div className={styles.postActions}>
                 <button
                   onClick={handleEditPost}

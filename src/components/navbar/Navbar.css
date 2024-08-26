@@ -4,7 +4,7 @@
   position: sticky;
   top: 0;
   width: 100%;
-  z-index: 1000;
+  z-index: 900;
   padding: 0px 100px;
   box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease-in-out;
@@ -219,7 +219,7 @@ nav ul li a {
     right: -100%;
     z-index: 10;
     width: 85%;
-    background-color: rgb(39, 39, 39);
+    background-color: rgb(213, 60, 255);
     transition: 0.3s ease-out;
     overflow-y: auto;
     box-shadow: -5px 0 5px rgba(0,0,0, 0.25);
@@ -281,4 +281,15 @@ nav ul li a {
     left: 0;
     z-index: 9;
   }
+
+  .main-navbar .nav-link.active {
+    color: white;
+    border-bottom: 3px solid white; /* Add underline for the active link */
+  }
+  
+  .main-navbar .nav-link {
+    color: white;
+    padding-bottom: 3px; /* Adjust this value as needed */
+  }
+  
 }

@@ -1,5 +1,5 @@
 .forumPage {
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 0px 16px;
 }
@@ -202,6 +202,10 @@
 
 .button:hover {
   transform: translateY(-2px);
+}
+
+.loadMoreBtn {
+  margin-top: 10px;
 }
 
 /* .floatingButton {

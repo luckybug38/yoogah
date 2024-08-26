@@ -2,15 +2,12 @@
     padding: 20px 20px;
 }
 
-.stickyNavbar {
-    position: sticky;
-    top: 0;
-    background-color: white;
+.buttons {
     padding: 10px;
     z-index: 1000; /* Make sure it appears above other content */
     display: flex;
-    justify-content: space-between;
-    border-bottom: 1px solid #ccc;
+    gap: 6px;
+    justify-content: right;
   }
 
 .modalContainer {
@@ -25,13 +22,7 @@
   }
   
   .modalButton {
-    display: flex;
-    justify-content: flex-end;
     margin-bottom: 6px;
-  }
-  
-  .marginRight {
-    margin-right: 6px;
   }
 
   .imageUpload {

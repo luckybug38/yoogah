@@ -143,3 +143,30 @@
     height: auto; /* Adjusts the height to maintain the aspect ratio */
     object-fit: contain; /* Ensures the image maintains its aspect ratio and fits within the given dimensions */
   }
+
+.header {
+  display: flex;
+  align-items: center; /* Center the content vertically */
+  margin-bottom: 0px;
+}
+
+.profileContainer {
+  margin-right: 10px; /* Add some space between the image and the text */
+}
+
+.profileImage {
+  width: 40px; /* Adjust the size as needed */
+  border-radius: 50%; /* Make the image circular */
+  object-fit: cover; /* Ensure the image covers the entire area */
+}
+
+.authorInfo {
+  display: flex;
+  flex-direction: column; /* Stack the author info vertically */
+}
+
+.author {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0px; /* Add some space between the lines */
+}

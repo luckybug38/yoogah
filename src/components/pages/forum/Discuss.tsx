@@ -174,7 +174,7 @@ const Discuss = () => {
             <p>Loading more...</p>
           ) : (
             <button
-              className="luckybug-btn"
+              className={`luckybug-btn ${styles.loadMoreBtn}`}
               hidden={!lastVisible}
               onClick={() => fetchDiscussions()}
             >
