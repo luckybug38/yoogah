@@ -1,0 +1,62 @@
+.Modal {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 95%;
+  max-width: 600px;
+  max-height: 100vh;
+  background-color: white;
+  padding: 10px;
+  border-radius: 8px;
+  outline: none;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.Overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
+}
+
+.cropContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+.cropImage {
+  max-height: 60vh;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.buttons {
+    padding-top: 14px;
+    padding-bottom: 4px;
+    display: flex;
+    gap: 6px;
+}
+
+.spinner {
+    border: 2px solid #f3f3f3; /* Light grey */
+    border-top: 2px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }

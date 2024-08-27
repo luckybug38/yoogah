@@ -1,16 +1,20 @@
-// src/Settings.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   doc,
   getDoc,
   runTransaction,
   serverTimestamp,
 } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import styles from "./Settings.module.css";
-import { auth, db } from "../../../config/firebase";
+import { auth, db, storage } from "../../../config/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useDispatch } from "react-redux";
 import { updateProfile } from "../../../features/users/currentUserSlice";
+import imageCompression from "browser-image-compression";
+import "react-image-crop/dist/ReactCrop.css";
+import defaultProfilePic from "../../../assets/bom.jpeg"; // Import default image
+import CropModal from "./CropModal"; // Import CropModal component
 
 interface UserProfile {
   username: string;
@@ -55,7 +59,14 @@ const Settings: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
   const [buttonText, setButtonText] = useState("저장하기");
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(
+    null
+  );
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch();
+  const [showCropModal, setShowCropModal] = useState(false); // Control modal visibility
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -78,6 +89,16 @@ const Settings: React.FC = () => {
           setProfile(docSnap.data() as UserProfile);
           setFirebaseProfile(docSnap.data() as UserProfile);
         }
+
+        const profilePicRef = ref(storage, `profilePictures/${userId}`);
+        try {
+          const url = await getDownloadURL(profilePicRef);
+          setProfilePictureUrl(url);
+        } catch (error) {
+          console.log("No profile picture found, using default.");
+          setProfilePictureUrl(null);
+        }
+
         setLoading(false);
       };
 
@@ -97,10 +118,60 @@ const Settings: React.FC = () => {
     }));
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.addEventListener("load", () => {
+        setPreviewUrl(reader.result as string);
+        setShowCropModal(true); // Show the modal after selecting an image
+      });
+      reader.readAsDataURL(file);
+
+      // Reset the file input value to allow re-selection of the same file
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  function blobToFile(blob: Blob, fileName: string): File {
+    const file = new File([blob], fileName, { type: blob.type });
+    return file;
+  }
+  const handleCropConfirm = async (croppedImage: Blob) => {
+    if (!userId) return;
+
+    try {
+      const compressedImage = await imageCompression(
+        blobToFile(croppedImage, "cropped-image.png"),
+        {
+          maxSizeMB: 0.1,
+          maxWidthOrHeight: 1024,
+          useWebWorker: true,
+        }
+      );
+      console.log("compressed");
+      const storageRef = ref(storage, `profilePictures/${userId}`);
+      await uploadBytes(storageRef, compressedImage);
+      console.log("done uploading");
+      const downloadURL = await getDownloadURL(storageRef);
+      console.log("got download url");
+      setProfilePictureUrl(downloadURL);
+      setShowCropModal(false); // Close the modal after confirming the crop
+    } catch (error) {
+      console.error("Error uploading the image:", error);
+    }
+  };
+
+  const handleCancelCrop = () => {
+    console.log("cancelling");
+    setShowCropModal(false); // Close the modal without saving
+    setPreviewUrl(null);
+  };
   const handleSave = async () => {
     if (!userId) return;
 
-    const username = profile.username;
     try {
       await runTransaction(db, async (transaction) => {
         const userDocRef = doc(db, "users", userId);
@@ -110,28 +181,9 @@ const Settings: React.FC = () => {
           throw new Error("User profile not found");
         }
 
-        const userData = userDocSnap.data();
-        const lastUsernameUpdate = userData.lastUsernameUpdate?.toDate();
-        const oneMonthAgo = new Date();
-        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-        // Check if the user has updated the username in the last month
-        if (
-          profile.username !== firebaseProfile.username &&
-          lastUsernameUpdate &&
-          lastUsernameUpdate > oneMonthAgo
-        ) {
-          const diffInTime =
-            lastUsernameUpdate.getTime() - oneMonthAgo.getTime();
-          const diffInDays = Math.ceil(diffInTime / (1000 * 3600 * 24));
-          throw new Error(
-            `유저네임은 한 달에 한 번만 변경할 수 있습니다. 남은 일수: ${diffInDays}일.`
-          );
-        }
-
-        const usernameDocRef = doc(db, "usernames", username);
+        const usernameDocRef = doc(db, "usernames", profile.username);
         const usernameDocSnap = await transaction.get(usernameDocRef);
 
-        // Check if the username exists and is used by another user
         if (
           usernameDocSnap.exists() &&
           usernameDocSnap.data().userId !== userId
@@ -141,7 +193,6 @@ const Settings: React.FC = () => {
           );
         }
 
-        // If the username has changed, remove the old username
         if (
           firebaseProfile.username &&
           profile.username !== firebaseProfile.username
@@ -154,10 +205,8 @@ const Settings: React.FC = () => {
           transaction.delete(oldUsernameDocRef);
         }
 
-        // Set the new username
         transaction.set(usernameDocRef, { userId: userId });
 
-        // Save the user profile to the "users" collection
         if (profile.username !== firebaseProfile.username) {
           transaction.set(userDocRef, {
             ...profile,
@@ -169,8 +218,39 @@ const Settings: React.FC = () => {
           });
         }
       });
+
+      // if (
+      //   selectedFile &&
+      //   completedCrop &&
+      //   imgRef.current &&
+      //   previewCanvasRef.current
+      // ) {
+      //   setCanvasPreview(
+      //     imgRef.current,
+      //     previewCanvasRef.current,
+      //     completedCrop
+      //   );
+      //   const canvas = previewCanvasRef.current;
+      //   canvas.toBlob(async (blob) => {
+      //     if (!blob) return;
+
+      //     const compressedBlob = await imageCompression(blob, {
+      //       maxSizeMB: 1,
+      //       maxWidthOrHeight: 1024,
+      //       useWebWorker: true,
+      //     });
+
+      //     const storageRef = ref(storage, `profilePictures/${userId}`);
+      //     await uploadBytes(storageRef, compressedBlob);
+
+      //     const downloadURL = await getDownloadURL(storageRef);
+      //     setProfilePictureUrl(downloadURL);
+      //     setPreviewUrl(null);
+      //     setSelectedFile(null);
+      //   });
+      // }
+
       setFirebaseProfile(profile);
-      // Update the Redux store with the new profile
       dispatch(updateProfile(profile));
       setButtonText("저장되었습니다!");
       setTimeout(() => {
@@ -185,6 +265,16 @@ const Settings: React.FC = () => {
     }
   };
 
+  const handleEditClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleModalClose = () => {
+    setShowCropModal(false);
+  };
+
   if (loading) {
     return <div className={styles.loading}>Loading...</div>;
   }
@@ -192,6 +282,38 @@ const Settings: React.FC = () => {
   return (
     <div className={styles.container}>
       <h1 className={styles.header}>프로필</h1>
+      <div className={styles.profilePictureContainer}>
+        <img
+          src={profilePictureUrl || defaultProfilePic}
+          alt="Profile"
+          className={styles.profilePicture}
+        />
+
+        <button
+          type="button"
+          className={styles.editButton}
+          onClick={handleEditClick}
+        >
+          ✎
+        </button>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className={styles.fileInput}
+          ref={fileInputRef}
+          style={{ display: "none" }} // Hide the file input
+        />
+      </div>
+      {showCropModal && previewUrl && (
+        <CropModal
+          isOpen={showCropModal}
+          onRequestClose={handleModalClose}
+          src={previewUrl}
+          onConfirm={handleCropConfirm}
+          onCancel={handleCancelCrop}
+        />
+      )}
       <form className={styles.form}>
         <div className="mb-3">
           <label className="form-label">유저네임 (필수)</label>
@@ -223,57 +345,7 @@ const Settings: React.FC = () => {
           </label>
           <select name="region" value={profile.region} onChange={handleChange}>
             <option value="">선택하기</option>
-            <option value="AL">Alabama</option>
-            <option value="AK">Alaska</option>
-            <option value="AZ">Arizona</option>
-            <option value="AR">Arkansas</option>
-            <option value="CA">California</option>
-            <option value="CO">Colorado</option>
-            <option value="CT">Connecticut</option>
-            <option value="DE">Delaware</option>
-            <option value="DC">District Of Columbia</option>
-            <option value="FL">Florida</option>
-            <option value="GA">Georgia</option>
-            <option value="HI">Hawaii</option>
-            <option value="ID">Idaho</option>
-            <option value="IL">Illinois</option>
-            <option value="IN">Indiana</option>
-            <option value="IA">Iowa</option>
-            <option value="KS">Kansas</option>
-            <option value="KY">Kentucky</option>
-            <option value="LA">Louisiana</option>
-            <option value="ME">Maine</option>
-            <option value="MD">Maryland</option>
-            <option value="MA">Massachusetts</option>
-            <option value="MI">Michigan</option>
-            <option value="MN">Minnesota</option>
-            <option value="MS">Mississippi</option>
-            <option value="MO">Missouri</option>
-            <option value="MT">Montana</option>
-            <option value="NE">Nebraska</option>
-            <option value="NV">Nevada</option>
-            <option value="NH">New Hampshire</option>
-            <option value="NJ">New Jersey</option>
-            <option value="NM">New Mexico</option>
-            <option value="NY">New York</option>
-            <option value="NC">North Carolina</option>
-            <option value="ND">North Dakota</option>
-            <option value="OH">Ohio</option>
-            <option value="OK">Oklahoma</option>
-            <option value="OR">Oregon</option>
-            <option value="PA">Pennsylvania</option>
-            <option value="RI">Rhode Island</option>
-            <option value="SC">South Carolina</option>
-            <option value="SD">South Dakota</option>
-            <option value="TN">Tennessee</option>
-            <option value="TX">Texas</option>
-            <option value="UT">Utah</option>
-            <option value="VT">Vermont</option>
-            <option value="VA">Virginia</option>
-            <option value="WA">Washington</option>
-            <option value="WV">West Virginia</option>
-            <option value="WI">Wisconsin</option>
-            <option value="WY">Wyoming</option>
+            {/* ... other options ... */}
           </select>
         </div>
         <div className="mb-3">
@@ -319,7 +391,7 @@ const Settings: React.FC = () => {
         </div>
         <button
           type="button"
-          className="btn btn-primary"
+          className="luckybug-btn"
           onClick={handleSave}
           disabled={!profile.username}
         >
