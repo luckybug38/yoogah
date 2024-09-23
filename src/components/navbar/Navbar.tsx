@@ -1,17 +1,19 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import yookah_logo from "../../assets/yookah_logo.webp";
 import { getAuth, onAuthStateChanged, User } from "firebase/auth";
-import Auth from "../pages/auth/Auth";
 import LogoutButton from "../pages/auth/LogoutButton";
 import { useDispatch, useSelector } from "react-redux";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../config/firebase";
+import { ref, getDownloadURL } from "firebase/storage";
+import { db, storage } from "../../config/firebase";
 import { clearUserData, setUser } from "../../features/users/currentUserSlice";
+import { setFamily } from "../../features/family/familySlice";
 import { RootState } from "../../app/store";
 import "./Navbar.css";
 import { CiSearch } from "react-icons/ci";
-
+import { User as UserProfile } from "../../features/users/currentUserSlice";
+import { Child } from "../../features/family/familySlice";
 const Navbar: React.FC = () => {
   const auth = getAuth();
   const location = useLocation();
@@ -26,35 +28,184 @@ const Navbar: React.FC = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state: RootState) => state.currentUser.user);
 
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(
+    currentUser?.imageUrl || null
+  );
+
   useEffect(() => {
+    if (currentUser?.imageUrl) {
+      setProfilePictureUrl(currentUser.imageUrl);
+    }
+  }, [currentUser.imageUrl]);
+
+  useEffect(() => {
+    const fetchDocument = async (collection: string, docId: string) => {
+      const docRef = doc(db, collection, docId);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        return docSnap.data();
+      }
+      throw new Error(`${collection} document with ID ${docId} not found`);
+    };
+
+    const fetchProfilePicture = async (userId: string) => {
+      try {
+        const profilePicRef = ref(storage, `profilePictures/${userId}`);
+        return await getDownloadURL(profilePicRef);
+      } catch (error) {
+        console.error(`Error fetching profile picture for ${userId}:`, error);
+        return null;
+      }
+    };
+
+    const fetchParentProfile = async (
+      parentId: string,
+      currentUser: UserProfile
+    ) => {
+      if (!parentId) {
+        return null;
+      }
+      console.log(parentId + "," + currentUser.id);
+      if (parentId === currentUser.id) {
+        return currentUser; // Parent is the current user
+      }
+      const parentProfile = await fetchDocument("users", parentId);
+      const { lastUsernameUpdate, ...userProfileWithoutTimestamp } =
+        parentProfile;
+      return userProfileWithoutTimestamp;
+    };
+
+    const fetchFamilyProfile = async (
+      familyId: string,
+      currentUser: UserProfile
+    ) => {
+      const familyProfile = await fetchDocument("families", familyId);
+
+      const { momId, dadId, children } = familyProfile;
+
+      const mom = await fetchParentProfile(momId, currentUser);
+      const dad = await fetchParentProfile(dadId, currentUser);
+      // Here we get the children directly from familyProfile
+      const fetchedChildren: Child[] = await Promise.all(
+        children.map(async (child: Child) => {
+          const childWithImageUrl = {
+            ...child,
+            imageUrl: child.imageUrl || (await fetchProfilePicture(child.id)), // Use imageUrl if available, otherwise fetch it
+          };
+          return childWithImageUrl;
+        })
+      );
+
+      return { mom, dad, children: fetchedChildren };
+    };
+
     const fetchUserProfile = async (fbUser: User) => {
       try {
-        const docRef = doc(db, "users", fbUser.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const userProfile = docSnap.data();
-          const { lastUsernameUpdate, ...userProfileWithoutTimestamp } =
-            userProfile;
-          dispatch(
-            setUser({
-              id: fbUser.uid,
-              photoURL: fbUser.photoURL || undefined,
-              ...userProfileWithoutTimestamp,
-            })
+        // Fetch user profile
+        const userProfile = await fetchDocument("users", fbUser.uid);
+        const familyId = userProfile.familyId;
+        const { lastUsernameUpdate, ...userProfileWithoutTimestamp } =
+          userProfile;
+        const user = {
+          id: fbUser.uid,
+          photoURL: fbUser.photoURL || undefined,
+          ...userProfileWithoutTimestamp,
+        };
+
+        // Set user profile in the store
+        dispatch(setUser(user));
+
+        console.log(user);
+
+        // If familyId exists, fetch family details
+        if (familyId) {
+          const { mom, dad, children } = await fetchFamilyProfile(
+            familyId,
+            user
           );
-        } else {
-          console.error("User profile not found");
+          console.log("Mom:", mom, "Dad:", dad, "Children:", children);
+          dispatch(setFamily({ mom, dad, children }));
         }
+
+        // Fetch and set the profile picture
+        const profilePictureUrl = await fetchProfilePicture(fbUser.uid);
+        setProfilePictureUrl(profilePictureUrl);
       } catch (error) {
         console.error("Error fetching user profile:", error);
       }
     };
+
+    // const fetchUserProfile = async (fbUser: User) => {
+    //   try {
+    //     const docRef = doc(db, "users", fbUser.uid);
+    //     const docSnap = await getDoc(docRef);
+    //     if (docSnap.exists()) {
+    //       const userProfile = docSnap.data();
+    //       const { lastUsernameUpdate, ...userProfileWithoutTimestamp } =
+    //         userProfile;
+    //       const user = {
+    //         id: fbUser.uid,
+    //         photoURL: fbUser.photoURL || undefined,
+    //         ...userProfileWithoutTimestamp,
+    //       };
+    //       dispatch(setUser(user));
+    //       console.log(user);
+    //       const familyId = userProfile.familyId;
+    //       if (familyId) {
+    //         const docRef = doc(db, "families", familyId);
+    //         const familyDocSnap = await getDoc(docRef);
+    //         if (familyDocSnap.exists()) {
+    //           const familyProfile = familyDocSnap.data();
+    //           const momId = familyProfile.momId;
+    //           const dadId = familyProfile.dadId;
+    //           let mom: UserProfile;
+    //           let dad: UserProfile;
+    //           if (momId == user.id) {
+    //             mom = user;
+    //             const dadDocRef = doc(db, "users", dadId);
+    //             const dadDocSnap = await getDoc(dadDocRef);
+    //             if (dadDocSnap.exists()) {
+    //               const dadUserProfile = dadDocSnap.data();
+    //               const { lastUsernameUpdate, ...userProfileWithoutTimestamp } =
+    //                 dadUserProfile;
+    //               dad = userProfileWithoutTimestamp;
+    //             }
+    //           } else if (dadId == user.id) {
+    //             dad = user;
+    //             const momDocRef = doc(db, "users", momId);
+    //             const momDocSnap = await getDoc(momDocRef);
+    //             if (momDocSnap.exists()) {
+    //               const momUserProfile = momDocSnap.data();
+    //               const { lastUsernameUpdate, ...userProfileWithoutTimestamp } =
+    //                 momUserProfile;
+    //               mom = userProfileWithoutTimestamp;
+    //             }
+    //           }
+    //         }
+    //       }
+    //       // Fetch the profile picture from Firebase Storage
+    //       const profilePicRef = ref(storage, `profilePictures/${fbUser.uid}`);
+    //       try {
+    //         const url = await getDownloadURL(profilePicRef);
+    //         setProfilePictureUrl(url);
+    //       } catch (error) {
+    //         console.error("Error fetching profile picture:", error);
+    //         setProfilePictureUrl(null);
+    //       }
+    //     } else {
+    //       console.error("User profile not found");
+    //     }
+    //   } catch (error) {
+    //     console.error("Error fetching user profile:", error);
+    //   }
+    // };
 
     const unsubscribe = onAuthStateChanged(auth, (fbUser) => {
       if (fbUser) {
         fetchUserProfile(fbUser);
       } else {
         dispatch(clearUserData());
+        setProfilePictureUrl(null);
       }
     });
 
@@ -87,6 +238,13 @@ const Navbar: React.FC = () => {
     setMenuOpen(false);
   };
 
+  const navigate = useNavigate();
+
+  const login = () => {
+    navigate("/login");
+    toggleMenu();
+  };
+
   // Scroll control for hiding/showing the navbar
   useEffect(() => {
     const handleScroll = () => {
@@ -99,19 +257,15 @@ const Navbar: React.FC = () => {
       const windowHeight = window.innerHeight;
       const documentHeight = document.body.scrollHeight;
 
-      // Ignore small scrolls (like the bounce effect)
       if (scrollDifference < 10) {
         return;
       }
 
-      // If user is near the bottom of the page, keep navbar hidden
       if (currentScrollY + windowHeight >= documentHeight - 10) {
         setIsVisible(false);
       } else if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
-        // If scrolling down and passed a certain point, hide the navbar
         setIsVisible(false);
       } else if (currentScrollY < lastScrollY.current) {
-        // If scrolling up, show the navbar
         setIsVisible(true);
       }
 
@@ -144,9 +298,7 @@ const Navbar: React.FC = () => {
                 placeholder="Search"
                 aria-label="Search"
               />
-              {/* <span className="position-absolute top-50 translate-middle-y ms-3"> */}
               <CiSearch className="search-icon" />
-              {/* </span> */}
             </div>
           </div>
           <input
@@ -190,13 +342,33 @@ const Navbar: React.FC = () => {
                   to="/"
                   onClick={closeMenu}
                 >
-                  Community
+                  커뮤니티
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  className={`nav-link ${navLinkStyle}`}
+                  to="/memories"
+                  onClick={closeMenu}
+                >
+                  메모리
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  className={`nav-link ${navLinkStyle}`}
+                  to="/family"
+                  onClick={closeMenu}
+                >
+                  가족
                 </NavLink>
               </li>
 
               <li className="nav-auth-container">
                 {!currentUser.id ? (
-                  <Auth />
+                  <button className="luckybug-btn" onClick={login}>
+                    로그인
+                  </button>
                 ) : (
                   <NavLink
                     className={`nav-link ${navLinkStyle}`}
@@ -214,7 +386,9 @@ const Navbar: React.FC = () => {
           </div>
           <div className="auth-container">
             {!currentUser.id ? (
-              <Auth />
+              <button className="luckybug-btn" onClick={login}>
+                로그인
+              </button>
             ) : (
               <div>
                 <div className="btn-group">
@@ -224,10 +398,10 @@ const Navbar: React.FC = () => {
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
-                    {currentUser.photoURL ? (
+                    {profilePictureUrl ? (
                       <img
-                        src={currentUser.photoURL}
-                        alt="my image"
+                        src={profilePictureUrl}
+                        alt="Profile"
                         onClick={() => {}}
                       />
                     ) : (

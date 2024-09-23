@@ -57,7 +57,7 @@ const Comment: React.FC<CommentProps> = ({
       created: serverTimestamp(),
       userId: user.id,
       ...(user.username && { username: user.username }),
-      ...(user.photoURL && { photoURL: user.photoURL }),
+      ...(user.imageUrl && { photoURL: user.imageUrl }),
     });
 
     // Increment the replies count in the comment document

@@ -5,11 +5,14 @@ export interface User {
     email?: string;
     name?: string;
     username?: string;
-    photoURL?: string;
+    imageUrl?: string;
+    gender?: string;
     description?: string;
     currentCompany?: string;
     title?: string;
     likedPosts?: { [key: string]: boolean };
+    familyId?: string;
+    parentType?: string;
 }
 
 export interface CurrentUserState {
@@ -36,6 +39,8 @@ export const currentUserSlice = createSlice({
             state.user.name = action.payload.name;
             state.user.username = action.payload.username;
             state.user.title = action.payload.title;
+            state.user.familyId = action.payload.familyId;
+            state.user.imageUrl = action.payload.imageUrl;
         },
         clearUserData: (state) => {
             state.user = {};

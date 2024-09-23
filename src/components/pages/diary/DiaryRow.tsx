@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import styles from "./PostRow.module.css";
+import styles from "./DiaryRow.module.css";
 import { getTime } from "../../../utils/dateUtils";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 import { MdOutlineMessage } from "react-icons/md";
@@ -11,11 +11,11 @@ import { ref, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../config/firebase";
 import sample_profile from "../../../assets/yookah_logo.webp";
 
-interface PostRowProps {
+interface DiaryRow {
   post: any;
 }
 
-const PostRow: React.FC<PostRowProps> = ({ post }) => {
+const DiaryRow: React.FC<DiaryRow> = ({ post }) => {
   const user = useSelector((state: RootState) => state.currentUser.user);
   const navigate = useNavigate();
   const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(
@@ -30,7 +30,7 @@ const PostRow: React.FC<PostRowProps> = ({ post }) => {
   };
 
   const navigateToPost = (id: string) => {
-    navigate(`/post/${id}`, { state: { fromDiscuss: true } });
+    navigate(`/memories/${id}`, { state: { fromDiscuss: true } });
   };
 
   const truncateText = (text: string, maxLength: number) => {
@@ -83,7 +83,7 @@ const PostRow: React.FC<PostRowProps> = ({ post }) => {
             <div className={styles.author}>
               <span>{post.username}</span>
               <span>•</span>
-              {getTime(post.created)}
+              {getTime(post.date)}
             </div>
             <div className={styles.author}>
               <span>Georgia</span>
@@ -93,8 +93,6 @@ const PostRow: React.FC<PostRowProps> = ({ post }) => {
           </div>
         </div>
         <div className={styles.title}>{post.title}</div>
-        <div className={styles.postBody}>{truncateText(post.body, 200)}</div>
-        <div className={styles.spacer} />
         {post.images && post.images.length > 0 && (
           <div className={styles.postImages}>
             <div className={styles.postImage}>
@@ -106,6 +104,7 @@ const PostRow: React.FC<PostRowProps> = ({ post }) => {
             </div>
           </div>
         )}
+        <div className={styles.postBody}>{truncateText(post.body, 200)}</div>
 
         {post.tags && post.tags.length > 0 && (
           <div className={styles.tags}>
@@ -120,6 +119,7 @@ const PostRow: React.FC<PostRowProps> = ({ post }) => {
             ))}
           </div>
         )}
+        <div className={styles.spacer} />
         <div className={styles.stats}>
           <div className={styles.likes}>
             {hasUserLikedPost() ? (
@@ -141,4 +141,4 @@ const PostRow: React.FC<PostRowProps> = ({ post }) => {
   );
 };
 
-export default PostRow;
+export default DiaryRow;

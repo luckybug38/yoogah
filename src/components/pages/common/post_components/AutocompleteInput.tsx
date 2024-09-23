@@ -9,15 +9,21 @@ import fetchTags from "./FetchTags";
 import styles from "./AutocompleteInput.module.css";
 
 const TAG_LIMIT = 3;
-
+export enum PostType {
+  POST = "POST",
+  DIARY = "DIARY",
+  // Add more modes if needed
+}
 interface AutocompleteInputProps {
   setSelectedTags: (tags: string[]) => void;
   prevSelectedTags?: string[];
+  fetchMode?: PostType;
 }
 
 const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
   setSelectedTags,
   prevSelectedTags = [], // Default to an empty array if not provided
+  fetchMode = PostType.POST,
 }) => {
   const [tags, setTags] = useState<string[]>([]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -30,14 +36,15 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
 
   useEffect(() => {
     const loadTags = async () => {
-      const fetchedTags = await fetchTags();
+      console.log(fetchMode);
+      const fetchedTags = await fetchTags(fetchMode);
       setTags(fetchedTags);
       setSuggestionsWithFiltering(fetchedTags, selectedTags);
     };
 
     loadTags();
   }, []);
-
+  const placeHolderText = fetchMode == PostType.POST ? "태그" : "이벤트";
   useEffect(() => {
     if (prevSelectedTags.length > 0) {
       setLocalSelectedTags(prevSelectedTags);
@@ -162,7 +169,7 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
             onKeyDown={handleKeyDown}
             onFocus={handleFocus}
             onBlur={handleBlur}
-            placeholder="태그"
+            placeholder={placeHolderText}
             className={styles.input}
           />
         }

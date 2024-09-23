@@ -17,20 +17,18 @@ import {
   getDocFromServer,
 } from "firebase/firestore";
 import { db, storage } from "../../../config/firebase";
-import styles from "./Post.module.css";
-import "./quill.css";
-import Comment from "../common/Comment";
+import styles from "./Diary.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../app/store";
-import { getTime } from "../../../utils/dateUtils";
 import { toggleLikedPost } from "../../../features/users/currentUserSlice";
 import { deleteObject, ref } from "firebase/storage";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 import { MdOutlineMessage } from "react-icons/md";
 import { IoIosTrendingUp } from "react-icons/io";
+import Comment from "../common/Comment";
 
-const Post: React.FC = () => {
-  const { postId } = useParams<{ postId: string }>();
+const Diary: React.FC = () => {
+  const { diaryId } = useParams<{ diaryId: string }>();
   const [post, setPost] = useState<any>(null);
   const [commentContent, setCommentContent] = useState<string>("");
   const [comments, setComments] = useState<any[]>([]);
@@ -46,9 +44,9 @@ const Post: React.FC = () => {
   const location = useLocation();
   const { shouldNotIncrementView, shouldLoadFromServer } = location.state;
   const fetchComments = async () => {
-    if (postId) {
+    if (diaryId) {
       const commentsQuery = query(
-        collection(db, "posts", postId, "comments"),
+        collection(db, "diaries", diaryId, "comments"),
         orderBy("created", "desc"),
         limit(100)
       );
@@ -63,8 +61,8 @@ const Post: React.FC = () => {
 
   useEffect(() => {
     const fetchPost = async () => {
-      if (postId) {
-        const docRef = doc(db, "posts", postId);
+      if (diaryId) {
+        const docRef = doc(db, "diaries", diaryId);
         if (shouldLoadFromServer) {
           console.log("loadin from server");
         }
@@ -87,14 +85,14 @@ const Post: React.FC = () => {
 
     fetchPost();
     fetchComments();
-  }, [postId]);
+  }, [diaryId]);
 
   const handlePostComment = async () => {
     if (!commentContent.trim()) return;
-    if (!postId) {
+    if (!diaryId) {
       return;
     }
-    const commentRef = collection(db, "posts", postId, "comments");
+    const commentRef = collection(db, "diaries", diaryId, "comments");
     await addDoc(commentRef, {
       content: commentContent,
       created: serverTimestamp(),
@@ -103,7 +101,7 @@ const Post: React.FC = () => {
       ...(user.imageUrl && { photoURL: user.imageUrl }),
     });
     // Optionally update the comments count
-    const postRef = doc(db, "posts", postId);
+    const postRef = doc(db, "diaries", diaryId);
     await updateDoc(postRef, {
       commentsCount: increment(1),
     });
@@ -111,7 +109,7 @@ const Post: React.FC = () => {
     // Clear the comment input field
     setCommentContent("");
     // Fetch the updated comments
-    const commentsQuery = query(collection(db, "posts", postId, "comments"));
+    const commentsQuery = query(collection(db, "diaries", diaryId, "comments"));
     const commentsSnapshot = await getDocs(commentsQuery);
     const commentsList = commentsSnapshot.docs.map((doc) => ({
       id: doc.id,
@@ -121,9 +119,9 @@ const Post: React.FC = () => {
   };
 
   const fetchReplies = async (commentId: string) => {
-    if (!postId) return [];
+    if (!diaryId) return [];
     const repliesQuery = query(
-      collection(db, "posts", postId, "comments", commentId, "replies"),
+      collection(db, "diaries", diaryId, "comments", commentId, "replies"),
       orderBy("created", "desc"),
       limit(100)
     );
@@ -136,9 +134,9 @@ const Post: React.FC = () => {
 
   const handleEditPost = () => {
     console.log(post);
-    navigate("/post/write", {
+    navigate("/memories/write", {
       state: {
-        id: postId,
+        id: diaryId,
         existingImages: post.images,
         title: post.title,
         content: post.body,
@@ -149,11 +147,11 @@ const Post: React.FC = () => {
   };
 
   const handleDeletePost = async () => {
-    if (!postId) return;
+    if (!diaryId) return;
 
     const confirmDelete = window.confirm("이 게시물을 삭제하시겠습니까?");
     if (confirmDelete) {
-      const postRef = doc(db, "posts", postId);
+      const postRef = doc(db, "diaries", diaryId);
       const postDoc = await getDoc(postRef);
       if (postDoc.exists()) {
         const postData = postDoc.data();
@@ -174,7 +172,7 @@ const Post: React.FC = () => {
         // Delete post from Firestore
         await deleteDoc(postRef);
         alert("포스트가 삭제되었습니다.");
-        navigate("/");
+        navigate("/memories");
       } else {
         alert("포스트를 찾을 수 없습니다.");
       }
@@ -190,35 +188,35 @@ const Post: React.FC = () => {
   }
 
   const hasUserLikedPost = () => {
-    if (postId && user.likedPosts && user.likedPosts[postId]) {
+    if (diaryId && user.likedPosts && user.likedPosts[diaryId]) {
       return true;
     }
     return false;
   };
 
   const handleLikeClick = async () => {
-    if (user.id && postId) {
+    if (user.id && diaryId) {
       const id = user.id;
       const docRef = doc(db, "users", user.id);
       let diffLike = 0;
       await runTransaction(db, async (transaction) => {
         const userDoc = await transaction.get(docRef);
         if (userDoc.exists()) {
-          const postRef = doc(db, "posts", postId);
+          const postRef = doc(db, "diaries", diaryId);
 
           const likedPosts = userDoc.data().likedPosts || {};
-          if (likedPosts.hasOwnProperty(postId)) {
+          if (likedPosts.hasOwnProperty(diaryId)) {
             diffLike = -1;
             transaction.update(postRef, {
               likeCount: increment(-1),
             });
-            delete likedPosts[postId];
+            delete likedPosts[diaryId];
           } else {
             diffLike = 1;
             transaction.update(postRef, {
               likeCount: increment(1),
             });
-            likedPosts[postId] = true;
+            likedPosts[diaryId] = true;
           }
           transaction.update(doc(db, "users", id), {
             likedPosts: likedPosts,
@@ -265,7 +263,6 @@ const Post: React.FC = () => {
         <div className={styles.postMetadata}>
           <span className={styles.postAuthor}>{post.username}</span>
           <span className={styles.postDate}>•</span>
-          <span className={styles.postDate}>{getTime(post.created)}</span>
         </div>
         <div className={styles.postContent}>
           <p className={styles.postBody}>{post.body}</p>
@@ -333,7 +330,7 @@ const Post: React.FC = () => {
               <Comment
                 key={comment.id}
                 comment={comment}
-                postId={postId!}
+                postId={diaryId!}
                 fetchReplies={fetchReplies}
                 reloadComments={fetchComments}
               />
@@ -353,4 +350,4 @@ const Post: React.FC = () => {
   );
 };
 
-export default Post;
+export default Diary;

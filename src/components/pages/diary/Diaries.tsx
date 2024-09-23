@@ -8,17 +8,17 @@ import {
   startAfter,
 } from "firebase/firestore";
 import { db } from "../../../config/firebase";
-import styles from "./Discuss.module.css";
+import styles from "./Diaries.module.css";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../app/store";
-import PostRow from "./PostRow";
+import DiaryRow from "./DiaryRow";
 import { useNavigate } from "react-router-dom";
 import { IoIosAdd } from "react-icons/io";
 
 const paginationLimit = 6;
 
-const Discuss = () => {
-  const [discussions, setDiscussions] = useState<any[]>([]);
+const Diaries = () => {
+  const [diaries, setDiaries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastVisible, setLastVisible] = useState<any>(null);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -61,10 +61,10 @@ const Discuss = () => {
   }, []);
 
   useEffect(() => {
-    fetchDiscussions(true);
+    fetchDiaries(true);
   }, []);
 
-  const fetchDiscussions = async (isInitialLoad = false) => {
+  const fetchDiaries = async (isInitialLoad = false) => {
     if (!isInitialLoad && !lastVisible) {
       return;
     }
@@ -73,26 +73,24 @@ const Discuss = () => {
     setIsLoadingMore(!isInitialLoad);
 
     try {
-      const postsRef = collection(db, "posts");
-      const postsQuery = isLastVisible
+      const diariesRef = collection(db, "diaries");
+      const diariessQuery = isLastVisible
         ? query(
-            postsRef,
-            orderBy("created", "desc"),
+            diariesRef,
+            orderBy("date", "desc"),
             startAfter(isLastVisible),
             limit(paginationLimit)
           )
-        : query(postsRef, orderBy("created", "desc"), limit(paginationLimit));
+        : query(diariesRef, orderBy("date", "desc"), limit(paginationLimit));
 
-      const querySnapshot = await getDocs(postsQuery);
-      const discussionsData = querySnapshot.docs.map((doc) => ({
+      const querySnapshot = await getDocs(diariessQuery);
+      const diariesData = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
 
-      setDiscussions((prevDiscussions) =>
-        isInitialLoad
-          ? discussionsData
-          : [...prevDiscussions, ...discussionsData]
+      setDiaries((prevDiaries) =>
+        isInitialLoad ? diariesData : [...prevDiaries, ...diariesData]
       );
 
       setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
@@ -109,7 +107,7 @@ const Discuss = () => {
     if (!user.id) {
       alert("로그인 후 등록해주세요!");
     } else {
-      navigate("/post/write", {
+      navigate("/memories/write", {
         state: {
           title: "",
           content: "",
@@ -131,7 +129,7 @@ const Discuss = () => {
             type="button"
             onClick={handleCreatePost}
           >
-            + Add Post
+            + 일기쓰기
           </button>
         </div>
       </div>
@@ -140,8 +138,8 @@ const Discuss = () => {
           <p className={styles.loading}>Loading...</p>
         ) : (
           <ul className={`${styles.forumQuestions}`}>
-            {discussions.map((item) => (
-              <PostRow key={item.id} post={item} />
+            {diaries.map((item) => (
+              <DiaryRow key={item.id} post={item} />
             ))}
           </ul>
         )}
@@ -152,7 +150,7 @@ const Discuss = () => {
             <button
               className={`luckybug-btn ${styles.loadMoreBtn}`}
               hidden={!lastVisible}
-              onClick={() => fetchDiscussions()}
+              onClick={() => fetchDiaries()}
             >
               Load More
             </button>
@@ -175,4 +173,4 @@ const Discuss = () => {
   );
 };
 
-export default Discuss;
+export default Diaries;

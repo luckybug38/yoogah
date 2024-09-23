@@ -1,0 +1,142 @@
+.icon {
+  margin-right: 10px;
+  height: 30px;
+  width: 30px;
+}
+
+/* Container styling */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  text-align: center;
+  padding: 0px 8px;
+}
+
+.card {
+  margin-top: 40px;
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+.header {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 24px;
+}
+
+.googleButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  width: 100%;
+  margin-bottom: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.googleButton:hover {
+  background-color: #f5f5f5;
+}
+
+.googleLogo {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+}
+
+.dividerContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 16px 0;
+}
+
+.divider {
+  flex: 1;
+  height: 1px;
+  background-color: #ddd;
+  border: none;
+}
+
+.orText {
+  margin: 0 10px;
+  color: #999;
+  font-size: 12px;
+}
+
+.emailInput {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.emailButton {
+  height: 40px;
+  width: 100%;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.emailButton:disabled {
+  cursor: not-allowed;
+}
+
+.termsText {
+  font-size: 12px;
+  color: #666;
+  margin-top: 0px;
+  margin-bottom: 4px;
+  text-align: left;
+  width: 100%;
+}
+
+.forgotPassword {
+  text-align: left;
+  width: 100%;
+  font-size: 12px;
+  color: #666;
+  margin-top: 0px;
+  margin-bottom: 4px;
+}
+
+.link {
+  color: #007bff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.spacer {
+  margin-top: 20px;
+}
+
+.resetMessage {
+  color: green;
+  font-size: 12px;
+  margin-top: 8px;
+}

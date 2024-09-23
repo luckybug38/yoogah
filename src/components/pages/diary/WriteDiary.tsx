@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   doc,
@@ -13,16 +15,18 @@ import {
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
-import imageCompression from "browser-image-compression"; // Import the library
+import imageCompression from "browser-image-compression";
 import { db } from "../../../config/firebase";
-import styles from "./WritePost.module.css";
-import AutocompleteInput from "../common/post_components/AutocompleteInput";
+import styles from "./WriteDiary.module.css";
 import SimpleEditor from "../../common/SimpleEditor";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../app/store";
 import { FaTrash, FaRegImage } from "react-icons/fa";
+import AutocompleteInput, {
+  PostType,
+} from "../common/post_components/AutocompleteInput";
 
-const WritePost: React.FC = () => {
+const WriteDiary: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const user = useSelector((state: RootState) => state.currentUser.user);
@@ -30,26 +34,24 @@ const WritePost: React.FC = () => {
   const {
     id = "",
     existingImages = [],
-    title = "",
     content = "",
-    tags = [],
     isEdit = false,
+    tags = [],
   } = location.state || {};
-  const [modalTitle, setModalTitle] = useState(title);
-  const [editorContent, setEditorContent] = useState(content);
+
   const [selectedTags, setSelectedTags] = useState<string[]>(tags);
+  const [editorContent, setEditorContent] = useState(content);
   const [images, setImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [existingImageUrls, setExistingImageUrls] =
     useState<string[]>(existingImages);
   const [imagesToRemove, setImagesToRemove] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
-  console.log(existingImages);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+
   useEffect(() => {
-    setModalTitle(title);
     setEditorContent(content);
-    setSelectedTags(tags);
-  }, [title, content, tags]);
+  }, [content]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -103,7 +105,7 @@ const WritePost: React.FC = () => {
 
       // Upload new images to Firebase Storage
       for (const image of images) {
-        const imageRef = ref(storage, `posts/${Date.now()}_${image.name}`);
+        const imageRef = ref(storage, `diaries/${Date.now()}_${image.name}`);
         await uploadBytes(imageRef, image);
         const downloadURL = await getDownloadURL(imageRef);
         newImageUrls.push(downloadURL);
@@ -129,25 +131,24 @@ const WritePost: React.FC = () => {
       if (isEdit) {
         try {
           console.log("editing: " + id);
-          const postRef = doc(db, "posts", id);
-          await updateDoc(postRef, {
-            title: modalTitle,
+          const diaryRef = doc(db, "diaries", id);
+          await updateDoc(diaryRef, {
             body: editorContent,
+            date: selectedDate || serverTimestamp(),
             lastEdited: serverTimestamp(),
-            tags: selectedTags,
             images: finalImageUrls,
           });
           alert("포스트가 수정되었습니다.");
         } catch (error) {
-          console.error("Error updating post: ", error);
+          console.error("Error updating diary: ", error);
           alert("포스트 수정에 실패했습니다. 다시 시도해주세요.");
         }
-        navigate(`/post/${id}`, {
+        navigate(`/memories/${id}`, {
           state: { shouldLoadFromServer: true },
           replace: true,
         });
       } else {
-        const counterRef = doc(db, "counters", "postCounter");
+        const counterRef = doc(db, "counters", "diaryCounter");
         await runTransaction(db, async (transaction) => {
           const counterDoc = await transaction.get(counterRef);
           let newCount;
@@ -165,15 +166,13 @@ const WritePost: React.FC = () => {
             transaction.update(counterRef, { count: newCount });
           }
 
-          const postRef = doc(db, "posts", newCount.toString());
-          transaction.set(postRef, {
-            title: modalTitle,
+          const diaryRef = doc(db, "diaries", newCount.toString());
+          transaction.set(diaryRef, {
             body: editorContent,
-            created: serverTimestamp(),
+            date: selectedDate,
             commentsCount: 0,
             views: 0,
             userId: user.id,
-            tags: selectedTags,
             images: finalImageUrls, // Save combined image URLs to Firestore
             ...(user.username && { username: user.username }),
             ...(user.imageUrl && { photoURL: user.imageUrl }),
@@ -181,7 +180,7 @@ const WritePost: React.FC = () => {
         });
 
         alert("저장완료");
-        navigate(`/post/${count}`, {
+        navigate(`/memories/${count}`, {
           state: { shouldNotIncrementView: true },
           replace: true,
         });
@@ -196,20 +195,22 @@ const WritePost: React.FC = () => {
   return (
     <div className={styles.mainContainer}>
       <div className={styles.modalContainer}>
-        <div className={styles.modalButton}>
-          <input
-            className="form-control"
-            placeholder="제목"
-            aria-label="title"
-            value={modalTitle}
-            onChange={(e) => setModalTitle(e.target.value)}
-          />
-        </div>
+        <DatePicker
+          selected={selectedDate}
+          onChange={(date) => setSelectedDate(date)}
+          dateFormat="yyyy/MM/dd (eee)" // This format includes the day of the week
+          className={`${styles.datePicker} ${styles.datePicker__wrapper}`}
+        />
         <AutocompleteInput
           setSelectedTags={setSelectedTags}
           prevSelectedTags={selectedTags}
+          fetchMode={PostType.DIARY}
         />
-        <SimpleEditor content={editorContent} setContent={setEditorContent} />
+        <SimpleEditor
+          content={editorContent}
+          setContent={setEditorContent}
+          type={PostType.DIARY}
+        />
         <div className={styles.imageUpload}>
           <label className={styles.fileInputLabel}>
             <FaRegImage className={styles.plusIcon} /> Image
@@ -270,7 +271,7 @@ const WritePost: React.FC = () => {
           <button
             className="luckybug-btn"
             onClick={handleSaveContent}
-            disabled={!modalTitle.trim() || !editorContent.trim() || uploading}
+            disabled={!editorContent.trim() || uploading}
           >
             {uploading ? "Uploading..." : "Post"}
           </button>
@@ -280,4 +281,4 @@ const WritePost: React.FC = () => {
   );
 };
 
-export default WritePost;
+export default WriteDiary;

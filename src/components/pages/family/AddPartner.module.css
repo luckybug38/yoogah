@@ -1,0 +1,27 @@
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 30px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.codes {
+  text-align: center;
+}
+
+.expiration {
+  font-size: 14px;
+}
+
+.spacer {
+  padding-top: 10px;
+}
+
+.announce {
+  text-align: center;
+  max-width: 400px;
+  font-size: 14px;
+}

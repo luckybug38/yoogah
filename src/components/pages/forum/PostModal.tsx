@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import styles from "./Discuss.module.css";
-import AutocompleteInput from "./post_components/AutocompleteInput";
-import SimpleEditor from "./SimpleEditor";
+import AutocompleteInput from "../common/post_components/AutocompleteInput";
+import SimpleEditor from "../../common/SimpleEditor";
 
 interface PostModalProps {
   isOpen: boolean;

@@ -1,0 +1,84 @@
+.familyNode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: 20px;
+  position: relative;
+}
+
+.parent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0px;
+}
+
+.lineHorizontalSmall {
+  width: 30px;
+  height: 2px;
+  background-color: #ccc;
+}
+
+.memberContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lineVerticalSmall {
+  width: 2px;
+  height: 30px;
+  background-color: #ccc;
+}
+
+.member {
+  display: inline-block;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.member img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 5px;
+  object-fit: cover; /* Ensure the image covers the entire area */
+}
+
+.femaleBorder {
+  border: 3px solid #f19bf6; /* Pink border for female */
+}
+
+.maleBorder {
+  border: 3px solid #89cff0; /* Blue border for male */
+}
+
+.member p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.children {
+  display: flex;
+  flex-wrap: wrap; /* Allows children to wrap to the next line */
+  justify-content: center; /* Centers the children */
+  position: relative;
+  gap: 20px; /* Adds space between children */
+}
+
+.lineHorizontalFull {
+  width: calc(100% - 100px); /* Spans the entire width of children */
+  height: 2px;
+  background-color: #ccc;
+  top: 0; /* Position this above the children */
+  left: 0;
+}
+
+.addChild {
+  padding-top: 20px;
+}

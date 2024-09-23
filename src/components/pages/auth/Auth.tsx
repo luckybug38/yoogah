@@ -41,7 +41,7 @@ const Auth = () => {
         dispatch(
           setUser({
             id: user.uid,
-            photoURL: user.photoURL || undefined,
+            imageUrl: user.photoURL || undefined,
             ...userProfileWithoutTimestamp,
           })
         );
