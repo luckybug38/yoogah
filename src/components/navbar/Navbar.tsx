@@ -11,9 +11,9 @@ import { clearUserData, setUser } from "../../features/users/currentUserSlice";
 import { setFamily } from "../../features/family/familySlice";
 import { RootState } from "../../app/store";
 import "./Navbar.css";
-import { CiSearch } from "react-icons/ci";
 import { User as UserProfile } from "../../features/users/currentUserSlice";
 import { Child } from "../../features/family/familySlice";
+import { SearchBox } from "react-instantsearch";
 const Navbar: React.FC = () => {
   const auth = getAuth();
   const location = useLocation();
@@ -65,7 +65,6 @@ const Navbar: React.FC = () => {
       if (!parentId) {
         return null;
       }
-      console.log(parentId + "," + currentUser.id);
       if (parentId === currentUser.id) {
         return currentUser; // Parent is the current user
       }
@@ -291,7 +290,13 @@ const Navbar: React.FC = () => {
             <Link className="navbar-brand" to="/" onClick={closeMenu}>
               <img src={yookah_logo} alt="logo" className="main_logo" />
             </Link>
-            <div className="position-relative">
+            <div className="searchbox">
+              <SearchBox
+                searchAsYouType={false}
+                onSubmit={() => navigate("/search")}
+              />
+            </div>
+            {/* <div className="position-relative">
               <input
                 className={`form-control discussSearchInput`}
                 type="search"
@@ -299,7 +304,7 @@ const Navbar: React.FC = () => {
                 aria-label="Search"
               />
               <CiSearch className="search-icon" />
-            </div>
+            </div> */}
           </div>
           <input
             type="checkbox"
@@ -375,7 +380,7 @@ const Navbar: React.FC = () => {
                     to="/settings"
                     onClick={closeMenu}
                   >
-                    Settings
+                    프로필
                   </NavLink>
                 )}
               </li>
@@ -418,7 +423,7 @@ const Navbar: React.FC = () => {
                         to="/settings"
                         onClick={closeMenu}
                       >
-                        <button className="dropdown-item">Settings</button>
+                        <button className="dropdown-item">프로필</button>
                       </Link>
                     </li>
                     <li>

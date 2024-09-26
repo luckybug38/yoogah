@@ -5,7 +5,8 @@
   text-align: center;
 }
 
-.main-container {}
+.main-container {
+}
 
 .logo {
   height: 6em;
@@ -41,4 +42,8 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.ais-InstantSearch {
+  max-width: 400px;
 }

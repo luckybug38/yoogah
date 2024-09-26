@@ -24,51 +24,62 @@ import AddPartner from "./components/pages/family/AddPartner";
 import Login from "./components/pages/auth/Login";
 import Signup from "./components/pages/auth/Signup";
 import VerifyEmail from "./components/pages/auth/VerifyEmail";
+import { Search } from "./components/search/Search";
+import { Configure, InstantSearch } from "react-instantsearch";
+import { algoliasearch } from "algoliasearch";
+
+const searchClient = algoliasearch(
+  "2XZLLQ1Z2G",
+  "6f663408b002e0063150c5e1b12d8be5"
+);
 
 const App = () => {
   return (
+    //#faf2ff
     <div
       className="main-container"
-      style={{ backgroundColor: "#faf2ff", minHeight: "100vh" }}
+      style={{ backgroundColor: "#fbf7fc", minHeight: "100vh" }}
     >
-      <Navbar />
-      <Routes>
-        <Route path="/verify" element={<VerifyEmail />} />
-
-        <Route element={<PrivateRoutes />}>
-          <Route path="/" element={<Discuss />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/post">
-            <Route index element={<Discuss />} />
-            <Route path=":postId" element={<Post />} />
-            <Route path="write" element={<WritePost />} />
+      <InstantSearch searchClient={searchClient} indexName="yookah_posts">
+        <Configure hitsPerPage={5} />
+        <Navbar />
+        <Routes>
+          <Route path="/search" element={<Search />} />
+          <Route path="/verify" element={<VerifyEmail />} />
+          <Route element={<PrivateRoutes />}>
+            <Route path="/" element={<Discuss />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/post">
+              <Route index element={<Discuss />} />
+              <Route path=":postId" element={<Post />} />
+              <Route path="write" element={<WritePost />} />
+            </Route>
+            <Route path="/memories">
+              <Route index element={<Diaries />} />
+              <Route path=":diaryId" element={<Diary />} />
+              <Route path="write" element={<WriteDiary />} />
+            </Route>
+            <Route path="/courses" element={<AllCourses />}>
+              <Route path="" element={<Navigate to="overview" />} />
+              <Route path="overview" element={<Courses />} />
+              <Route path="1" element={<IntroProgramming />} />
+            </Route>
+            <Route path="/faq" element={<Faq />} />
+            <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/family">
+              <Route index element={<FamilyTree />} />
+              <Route path="add" element={<AddMember />} />
+              <Route path="edit" element={<EditMember />} />
+              <Route path="partner" element={<AddPartner />} />
+            </Route>
           </Route>
-          <Route path="/memories">
-            <Route index element={<Diaries />} />
-            <Route path=":diaryId" element={<Diary />} />
-            <Route path="write" element={<WriteDiary />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route element={<PrivateRoutes2 />}>
+            <Route path="/settings" element={<Settings />} />
           </Route>
-          <Route path="/courses" element={<AllCourses />}>
-            <Route path="" element={<Navigate to="overview" />} />
-            <Route path="overview" element={<Courses />} />
-            <Route path="1" element={<IntroProgramming />} />
-          </Route>
-          <Route path="/faq" element={<Faq />} />
-          <Route path="/pricing" element={<PricingPage />} />
-          <Route path="/family">
-            <Route index element={<FamilyTree />} />
-            <Route path="add" element={<AddMember />} />
-            <Route path="edit" element={<EditMember />} />
-            <Route path="partner" element={<AddPartner />} />
-          </Route>
-        </Route>
-        <Route path="/auth" element={<Auth />} />
-        <Route element={<PrivateRoutes2 />}>
-          <Route path="/settings" element={<Settings />} />
-        </Route>
-      </Routes>
-      {/* <HubSpot /> */}
+        </Routes>
+      </InstantSearch>
     </div>
   );
 };

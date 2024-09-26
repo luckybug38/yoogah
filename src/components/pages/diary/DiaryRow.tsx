@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../app/store";
 import { ref, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../config/firebase";
-import sample_profile from "../../../assets/yookah_logo.webp";
+import defaultProfilePic from "../../../assets/default_profile.svg"; // Import default image
 
 interface DiaryRow {
   post: any;
@@ -57,7 +57,7 @@ const DiaryRow: React.FC<DiaryRow> = ({ post }) => {
         }
       } catch (error) {
         console.error("Error fetching profile picture:", error);
-        setProfilePictureUrl(sample_profile); // Fallback to default if error occurs
+        setProfilePictureUrl(defaultProfilePic); // Fallback to default if error occurs
       }
     };
 
@@ -74,7 +74,7 @@ const DiaryRow: React.FC<DiaryRow> = ({ post }) => {
         <div className={styles.header}>
           <div className={styles.profileContainer}>
             <img
-              src={profilePictureUrl || sample_profile}
+              src={profilePictureUrl || defaultProfilePic}
               alt="Profile"
               className={styles.profileImage}
             />

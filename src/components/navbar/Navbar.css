@@ -173,6 +173,12 @@ nav ul li a {
   display: none;
 }
 
+.searchbox {
+  height: 100%;
+  padding-left: 12px;
+  max-width: 250px;
+}
+
 @media (max-width: 768px) {
   .navbar {
     padding: 0 10px; /* Adjust padding for smaller screens */

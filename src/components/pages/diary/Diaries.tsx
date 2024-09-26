@@ -122,14 +122,14 @@ const Diaries = () => {
     <div className={styles.forumPage}>
       <div className={styles.forumHeader}>
         <div className={styles.stickyHeader}>
-          <h5>All</h5>
+          <h5></h5>
 
           <button
             className={`luckybug-btn ${styles.discussSearchInput}`}
             type="button"
             onClick={handleCreatePost}
           >
-            + 일기쓰기
+            + 글쓰기
           </button>
         </div>
       </div>
