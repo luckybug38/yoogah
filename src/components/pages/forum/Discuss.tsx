@@ -124,8 +124,6 @@ const Discuss = () => {
     <div className={styles.forumPage}>
       <div className={styles.forumHeader}>
         <div className={styles.stickyHeader}>
-          <h5></h5>
-
           <button
             className={`luckybug-btn ${styles.discussSearchInput}`}
             type="button"
@@ -169,7 +167,7 @@ const Discuss = () => {
         onClick={handleCreatePost}
       >
         <IoIosAdd size={38} />
-        <span>{showFullButton ? "Add post" : null}</span>
+        <span>{showFullButton ? "글쓰기" : null}</span>
       </button>
     </div>
   );

@@ -4,9 +4,13 @@
   box-sizing: border-box;
   font-family: sans-serif;
 }
+html {
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+}
 
 :root {
-  --main-color: #bb1cff; /* Define your color */
+  --main-color: rgb(138, 103, 254); /* Define your color */
 }
 
 .luckybug-btn {

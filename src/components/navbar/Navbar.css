@@ -4,7 +4,7 @@
   position: sticky;
   top: 0;
   width: 100%;
-  z-index: 900;
+  z-index: 1100;
   padding: 0px 100px;
   box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease-in-out;
@@ -24,6 +24,7 @@
 .luckybug-navbar-logo-search {
   display: flex;
   align-items: center;
+  gap: 10px;
 }
 
 .search-icon {
@@ -147,16 +148,31 @@ nav ul li a {
 
 .nav-link-white {
   position: sticky;
-  color: white;
+  /* color: white; */
 }
 
 .nav-link-active {
   color: black;
 }
 
+.nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 15px;
+  color: #666;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s;
+  height: 50px; /* Match the navbar height */
+  padding: 4px 10px;
+}
+
 .main-navbar .nav-link.active {
   color: var(--main-color);
-  border-bottom: 3px solid var(--main-color); /* Add underline for the active link */
+  border-bottom: 2px solid var(--main-color); /* Add underline for the active link */
+  padding-bottom: 0; /* Remove the padding when the border is added */
 }
 
 .main-navbar .nav-link {
@@ -172,11 +188,13 @@ nav ul li a {
 .nav-auth-container {
   display: none;
 }
+.ais-SearchBox {
+  width: 100%;
+  width: 400px;
+}
 
-.searchbox {
-  height: 100%;
-  padding-left: 12px;
-  max-width: 250px;
+.ais-SearchBox-reset {
+  display: none !important;
 }
 
 @media (max-width: 768px) {
@@ -205,7 +223,7 @@ nav ul li a {
 
 @media (max-width: 767px) {
   .nav-link-active {
-    color: white;
+    /* color: white; */
   }
   .nav-auth-container {
     display: block;
@@ -224,7 +242,7 @@ nav ul li a {
     right: -100%;
     z-index: 10;
     width: 85%;
-    background-color: rgb(45, 45, 45);
+    background-color: rgb(240, 240, 240);
     transition: 0.3s ease-out;
     overflow-y: auto;
     box-shadow: -5px 0 5px rgba(0, 0, 0, 0.25);
@@ -289,12 +307,18 @@ nav ul li a {
   }
 
   .main-navbar .nav-link.active {
-    color: white;
-    border-bottom: 3px solid white; /* Add underline for the active link */
+    border-bottom: 2px solid var(--main-color); /* Add underline for the active link */
+    padding-bottom: 0; /* Remove the padding when the border is added */
   }
 
   .main-navbar .nav-link {
-    color: white;
+    /* color: white; */
     padding-bottom: 3px; /* Adjust this value as needed */
+    width: 70px;
+    gap: 3px;
+  }
+
+  .logout-button-container {
+    padding-left: 10px;
   }
 }

@@ -14,6 +14,10 @@ import "./Navbar.css";
 import { User as UserProfile } from "../../features/users/currentUserSlice";
 import { Child } from "../../features/family/familySlice";
 import { SearchBox } from "react-instantsearch";
+import { FaHome } from "react-icons/fa";
+import { IoBook } from "react-icons/io5";
+import { MdFamilyRestroom } from "react-icons/md";
+
 const Navbar: React.FC = () => {
   const auth = getAuth();
   const location = useLocation();
@@ -290,11 +294,14 @@ const Navbar: React.FC = () => {
             <Link className="navbar-brand" to="/" onClick={closeMenu}>
               <img src={yookah_logo} alt="logo" className="main_logo" />
             </Link>
-            <div className="searchbox">
-              <SearchBox
-                searchAsYouType={false}
-                onSubmit={() => navigate("/search")}
-              />
+            <div className="searchbox-wrapper">
+              <div className="searchbox">
+                <SearchBox
+                  placeholder="검색어 입력"
+                  searchAsYouType={false}
+                  onSubmit={() => navigate("/search")}
+                />
+              </div>
             </div>
             {/* <div className="position-relative">
               <input
@@ -335,7 +342,7 @@ const Navbar: React.FC = () => {
                 height="32px"
                 viewBox="0 -960 960 960"
                 width="32px"
-                fill="#e8eaed"
+                fill="#666"
               >
                 <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
               </svg>
@@ -347,7 +354,8 @@ const Navbar: React.FC = () => {
                   to="/"
                   onClick={closeMenu}
                 >
-                  커뮤니티
+                  <FaHome size={20} />
+                  <span>커뮤니티</span>
                 </NavLink>
               </li>
               <li>
@@ -356,7 +364,8 @@ const Navbar: React.FC = () => {
                   to="/memories"
                   onClick={closeMenu}
                 >
-                  메모리
+                  <IoBook size={20} />
+                  <span>메모리</span>
                 </NavLink>
               </li>
               <li>
@@ -365,7 +374,8 @@ const Navbar: React.FC = () => {
                   to="/family"
                   onClick={closeMenu}
                 >
-                  가족
+                  <MdFamilyRestroom size={20} />
+                  <span>가족</span>
                 </NavLink>
               </li>
 
@@ -385,7 +395,11 @@ const Navbar: React.FC = () => {
                 )}
               </li>
               <li className="nav-auth-container">
-                {currentUser.id && <LogoutButton />}
+                {currentUser.id && (
+                  <div className="logout-button-container">
+                    <LogoutButton />
+                  </div>
+                )}
               </li>
             </ul>
           </div>

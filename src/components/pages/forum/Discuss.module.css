@@ -20,7 +20,7 @@
 .stickyHeader {
   height: 75px;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: end;
   padding-bottom: 10px;
   padding-left: 5px;
@@ -274,5 +274,9 @@
   }
   .discussSearchInput {
     display: none; /* Hide the existing button in the sticky header */
+  }
+
+  .stickyHeader {
+    height: 24px;
   }
 }
